@@ -85,6 +85,22 @@
 
                         </li>
                         <%} %>
+                        <% if (Session["role"] != null && Session["role"].ToString() == "admin")
+                            { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/adminprofile.aspx">My Profile</a>
+
+                        </li>
+                        <%} 
+                         else if(Session["role"] != null && Session["role"].ToString() == "doctor")
+                                { %>
+                             <a class="nav-link" href="/drreg.aspx#drreg">My Profile</a>
+                            <%} 
+                         else
+                                { %>
+                           <a class="nav-link" href="/patprofile.aspx">My Profile</a>
+                            <%} %>
+
                         <li class="nav-item">
                             <a class="nav-link" href="#contact">Contact</a>
                         </li>
