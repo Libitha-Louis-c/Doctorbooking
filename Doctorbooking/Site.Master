@@ -126,7 +126,7 @@
             <asp:LoginName runat="server"></asp:LoginName>
                 </LoggedInTemplate>
         </asp:LoginView>
-        <asp:LoginStatus ID="LoginStatus1" runat="server" />
+       <asp:LoginStatus ID="LoginStatus1" runat="server" />
         <div style="clear:both;"></div>--%>
         
         <form id="form1" runat="server">

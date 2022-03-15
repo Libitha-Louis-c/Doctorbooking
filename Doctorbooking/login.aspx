@@ -36,7 +36,7 @@
 
                             <div class="col-lg-6 col-12">
                                 <%-- <input type="password" name="name" id="pwd" class="form-control" placeholder="password" runat="server" required>--%>
-                                <asp:TextBox ID="txtpwd" runat="server" class="form-control" placeholder="password"></asp:TextBox>
+                                <asp:TextBox ID="txtpwd" runat="server" class="form-control" placeholder="password" TextMode="Password"></asp:TextBox>
 
                             </div>
 
