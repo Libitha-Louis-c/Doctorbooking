@@ -16,6 +16,11 @@
           <Property Name="pname" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="time" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="bookingdate" Type="datetime" Nullable="false" />
+          <Property Name="ailments" Type="varchar" MaxLength="200" />
+          <Property Name="cancelled" Type="bit" />
+          <Property Name="consulted" Type="bit" />
+          <Property Name="feepaid" Type="numeric" Precision="8" Scale="2" />
+          <Property Name="date" Type="datetime" />
         </EntityType>
         <EntityType Name="doctor">
           <Key>
@@ -38,6 +43,14 @@
           <Property Name="drid" Type="int" Nullable="false" />
           <Property Name="spid" Type="int" Nullable="false" />
           <Property Name="year_exp" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="NotWorking">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="docid" Type="int" Nullable="false" />
+          <Property Name="onDate" Type="date" Nullable="false" />
         </EntityType>
         <EntityType Name="patientreg">
           <Key>
@@ -73,9 +86,12 @@
           <Key>
             <PropertyRef Name="tid" />
           </Key>
-          <Property Name="tid" Type="int" Nullable="false" />
+          <Property Name="tid" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="docid" Type="int" />
+          <Property Name="pid" Type="int" />
           <Property Name="pname" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="testamt" Type="int" Nullable="false" />
+          <Property Name="test_details" Type="varchar(max)" />
+          <Property Name="testamt" Type="numeric" Precision="8" Scale="2" Nullable="false" />
           <Property Name="docname" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="usertab">
@@ -84,7 +100,7 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="email" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="roll" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="role" Type="varchar" MaxLength="30" Nullable="false" />
           <Property Name="pwd" Type="varchar" MaxLength="10" Nullable="false" />
         </EntityType>
         <Association Name="FK__appointme__drcid__05D8E0BE">
@@ -137,6 +153,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__NotWorkin__docid__59C55456">
+          <End Role="doctor" Type="Self.doctor" Multiplicity="1" />
+          <End Role="NotWorking" Type="Self.NotWorking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="doctor">
+              <PropertyRef Name="docId" />
+            </Principal>
+            <Dependent Role="NotWorking">
+              <PropertyRef Name="docid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__payments__docid__08B54D69">
           <End Role="doctor" Type="Self.doctor" Multiplicity="1" />
           <End Role="payments" Type="Self.payments" Multiplicity="*" />
@@ -161,10 +189,35 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__test__docid__51300E55">
+          <End Role="doctor" Type="Self.doctor" Multiplicity="0..1" />
+          <End Role="test" Type="Self.test" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="doctor">
+              <PropertyRef Name="docId" />
+            </Principal>
+            <Dependent Role="test">
+              <PropertyRef Name="docid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__test__pid__5224328E">
+          <End Role="patientreg" Type="Self.patientreg" Multiplicity="0..1" />
+          <End Role="test" Type="Self.test" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="patientreg">
+              <PropertyRef Name="pid" />
+            </Principal>
+            <Dependent Role="test">
+              <PropertyRef Name="pid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="bookingdbModelStoreContainer">
           <EntitySet Name="appointment" EntityType="Self.appointment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="doctor" EntityType="Self.doctor" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="drspecialisation" EntityType="Self.drspecialisation" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NotWorking" EntityType="Self.NotWorking" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="patientreg" EntityType="Self.patientreg" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="payments" EntityType="Self.payments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="spectab" EntityType="Self.spectab" Schema="dbo" store:Type="Tables" />
@@ -186,6 +239,10 @@
             <End Role="spectab" EntitySet="spectab" />
             <End Role="drspecialisation" EntitySet="drspecialisation" />
           </AssociationSet>
+          <AssociationSet Name="FK__NotWorkin__docid__59C55456" Association="Self.FK__NotWorkin__docid__59C55456">
+            <End Role="doctor" EntitySet="doctor" />
+            <End Role="NotWorking" EntitySet="NotWorking" />
+          </AssociationSet>
           <AssociationSet Name="FK__payments__docid__08B54D69" Association="Self.FK__payments__docid__08B54D69">
             <End Role="doctor" EntitySet="doctor" />
             <End Role="payments" EntitySet="payments" />
@@ -194,25 +251,19 @@
             <End Role="patientreg" EntitySet="patientreg" />
             <End Role="payments" EntitySet="payments" />
           </AssociationSet>
+          <AssociationSet Name="FK__test__docid__51300E55" Association="Self.FK__test__docid__51300E55">
+            <End Role="doctor" EntitySet="doctor" />
+            <End Role="test" EntitySet="test" />
+          </AssociationSet>
+          <AssociationSet Name="FK__test__pid__5224328E" Association="Self.FK__test__pid__5224328E">
+            <End Role="patientreg" EntitySet="patientreg" />
+            <End Role="test" EntitySet="test" />
+          </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="bookingdbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="appointment">
-          <Key>
-            <PropertyRef Name="apid" />
-          </Key>
-          <Property Name="apid" Type="Int32" Nullable="false" />
-          <Property Name="drloc" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="drcid" Type="Int32" Nullable="false" />
-          <Property Name="patid" Type="Int32" Nullable="false" />
-          <Property Name="pname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="time" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="bookingdate" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="doctor" Relationship="bookingdbModel.FK__appointme__drcid__05D8E0BE" FromRole="appointment" ToRole="doctor" />
-          <NavigationProperty Name="patientreg" Relationship="bookingdbModel.FK__appointme__patid__29221CFB" FromRole="appointment" ToRole="patientreg" />
-        </EntityType>
         <EntityType Name="payment">
           <Key>
             <PropertyRef Name="receiptno" />
@@ -233,26 +284,10 @@
           <Property Name="specname" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="drspecialisations" Relationship="bookingdbModel.FK__drspeciali__spid__17036CC0" FromRole="spectab" ToRole="drspecialisation" />
         </EntityType>
-        <EntityType Name="usertab">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="roll" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="pwd" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
-        </EntityType>
         <EntityContainer Name="bookingdbEntities1" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="appointments" EntityType="Self.appointment" />
           <EntitySet Name="payments" EntityType="Self.payment" />
           <EntitySet Name="spectabs" EntityType="Self.spectab" />
-          <EntitySet Name="usertabs" EntityType="Self.usertab" />
           <EntitySet Name="doctors" EntityType="bookingdbModel.doctor" />
-          <EntitySet Name="tests" EntityType="bookingdbModel.test" />
-          <AssociationSet Name="FK__appointme__drcid__05D8E0BE" Association="bookingdbModel.FK__appointme__drcid__05D8E0BE">
-            <End Role="doctor" EntitySet="doctors" />
-            <End Role="appointment" EntitySet="appointments" />
-          </AssociationSet>
           <AssociationSet Name="FK__payments__docid__08B54D69" Association="bookingdbModel.FK__payments__docid__08B54D69">
             <End Role="doctor" EntitySet="doctors" />
             <End Role="payment" EntitySet="payments" />
@@ -267,14 +302,34 @@
             <End Role="drspecialisation" EntitySet="drspecialisations" />
           </AssociationSet>
           <EntitySet Name="patientregs" EntityType="bookingdbModel.patientreg" />
-          <AssociationSet Name="FK__appointme__patid__29221CFB" Association="bookingdbModel.FK__appointme__patid__29221CFB">
-            <End Role="patientreg" EntitySet="patientregs" />
-            <End Role="appointment" EntitySet="appointments" />
-          </AssociationSet>
           <AssociationSet Name="FK__payments__pid__2A164134" Association="bookingdbModel.FK__payments__pid__2A164134">
             <End Role="patientreg" EntitySet="patientregs" />
             <End Role="payment" EntitySet="payments" />
           </AssociationSet>
+          <EntitySet Name="appointments" EntityType="bookingdbModel.appointment" />
+          <AssociationSet Name="FK__appointme__drcid__05D8E0BE" Association="bookingdbModel.FK__appointme__drcid__05D8E0BE">
+            <End Role="doctor" EntitySet="doctors" />
+            <End Role="appointment" EntitySet="appointments" />
+          </AssociationSet>
+          <AssociationSet Name="FK__appointme__patid__29221CFB" Association="bookingdbModel.FK__appointme__patid__29221CFB">
+            <End Role="patientreg" EntitySet="patientregs" />
+            <End Role="appointment" EntitySet="appointments" />
+          </AssociationSet>
+          <EntitySet Name="NotWorkings" EntityType="bookingdbModel.NotWorking" />
+          <EntitySet Name="tests" EntityType="bookingdbModel.test" />
+          <AssociationSet Name="FK__NotWorkin__docid__59C55456" Association="bookingdbModel.FK__NotWorkin__docid__59C55456">
+            <End Role="doctor" EntitySet="doctors" />
+            <End Role="NotWorking" EntitySet="NotWorkings" />
+          </AssociationSet>
+          <AssociationSet Name="FK__test__docid__51300E55" Association="bookingdbModel.FK__test__docid__51300E55">
+            <End Role="doctor" EntitySet="doctors" />
+            <End Role="test" EntitySet="tests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__test__pid__5224328E" Association="bookingdbModel.FK__test__pid__5224328E">
+            <End Role="patientreg" EntitySet="patientregs" />
+            <End Role="test" EntitySet="tests" />
+          </AssociationSet>
+          <EntitySet Name="usertabs" EntityType="bookingdbModel.usertab" />
           </EntityContainer>
         <EntityType Name="doctor">
           <Key>
@@ -288,31 +343,12 @@
           <Property Name="fee" Type="Decimal" Precision="8" Scale="2" />
           <Property Name="email" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="pwd" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="appointments" Relationship="bookingdbModel.FK__appointme__drcid__05D8E0BE" FromRole="doctor" ToRole="appointment" />
           <NavigationProperty Name="payments" Relationship="bookingdbModel.FK__payments__docid__08B54D69" FromRole="doctor" ToRole="payment" />
           <NavigationProperty Name="drspecialisations" Relationship="bookingdbModel.FK__drspeciali__drid__160F4887" FromRole="doctor" ToRole="drspecialisation" />
+          <NavigationProperty Name="appointments" Relationship="bookingdbModel.FK__appointme__drcid__05D8E0BE" FromRole="doctor" ToRole="appointment" />
+          <NavigationProperty Name="NotWorkings" Relationship="bookingdbModel.FK__NotWorkin__docid__59C55456" FromRole="doctor" ToRole="NotWorking" />
+          <NavigationProperty Name="tests" Relationship="bookingdbModel.FK__test__docid__51300E55" FromRole="doctor" ToRole="test" />
         </EntityType>
-        <EntityType Name="test">
-          <Key>
-            <PropertyRef Name="tid" />
-          </Key>
-          <Property Name="tid" Type="Int32" Nullable="false" />
-          <Property Name="pname" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="testamt" Type="Int32" Nullable="false" />
-          <Property Name="docname" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <Association Name="FK__appointme__drcid__05D8E0BE">
-          <End Type="bookingdbModel.doctor" Role="doctor" Multiplicity="1" />
-          <End Type="bookingdbModel.appointment" Role="appointment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="doctor">
-              <PropertyRef Name="docId" />
-            </Principal>
-            <Dependent Role="appointment">
-              <PropertyRef Name="drcid" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__payments__docid__08B54D69">
           <End Type="bookingdbModel.doctor" Role="doctor" Multiplicity="1" />
           <End Type="bookingdbModel.payment" Role="payment" Multiplicity="*" />
@@ -374,21 +410,10 @@
           <Property Name="mob" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="email" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="password" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="appointments" Relationship="bookingdbModel.FK__appointme__patid__29221CFB" FromRole="patientreg" ToRole="appointment" />
           <NavigationProperty Name="payments" Relationship="bookingdbModel.FK__payments__pid__2A164134" FromRole="patientreg" ToRole="payment" />
+          <NavigationProperty Name="appointments" Relationship="bookingdbModel.FK__appointme__patid__29221CFB" FromRole="patientreg" ToRole="appointment" />
+          <NavigationProperty Name="tests" Relationship="bookingdbModel.FK__test__pid__5224328E" FromRole="patientreg" ToRole="test" />
         </EntityType>
-        <Association Name="FK__appointme__patid__29221CFB">
-          <End Type="bookingdbModel.patientreg" Role="patientreg" Multiplicity="1" />
-          <End Type="bookingdbModel.appointment" Role="appointment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="patientreg">
-              <PropertyRef Name="pid" />
-            </Principal>
-            <Dependent Role="appointment">
-              <PropertyRef Name="patid" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__payments__pid__2A164134">
           <End Type="bookingdbModel.patientreg" Role="patientreg" Multiplicity="1" />
           <End Type="bookingdbModel.payment" Role="payment" Multiplicity="*" />
@@ -401,25 +426,123 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="appointment">
+          <Key>
+            <PropertyRef Name="apid" />
+          </Key>
+          <Property Name="apid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="drloc" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="drcid" Type="Int32" Nullable="false" />
+          <Property Name="patid" Type="Int32" Nullable="false" />
+          <Property Name="pname" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="time" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="bookingdate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ailments" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="cancelled" Type="Boolean" />
+          <Property Name="consulted" Type="Boolean" />
+          <Property Name="feepaid" Type="Decimal" Precision="8" Scale="2" />
+          <Property Name="date" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="doctor" Relationship="bookingdbModel.FK__appointme__drcid__05D8E0BE" FromRole="appointment" ToRole="doctor" />
+          <NavigationProperty Name="patientreg" Relationship="bookingdbModel.FK__appointme__patid__29221CFB" FromRole="appointment" ToRole="patientreg" />
+        </EntityType>
+        <Association Name="FK__appointme__drcid__05D8E0BE">
+          <End Type="bookingdbModel.doctor" Role="doctor" Multiplicity="1" />
+          <End Type="bookingdbModel.appointment" Role="appointment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="doctor">
+              <PropertyRef Name="docId" />
+            </Principal>
+            <Dependent Role="appointment">
+              <PropertyRef Name="drcid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__appointme__patid__29221CFB">
+          <End Type="bookingdbModel.patientreg" Role="patientreg" Multiplicity="1" />
+          <End Type="bookingdbModel.appointment" Role="appointment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="patientreg">
+              <PropertyRef Name="pid" />
+            </Principal>
+            <Dependent Role="appointment">
+              <PropertyRef Name="patid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="NotWorking">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="docid" Type="Int32" Nullable="false" />
+          <Property Name="onDate" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="doctor" Relationship="bookingdbModel.FK__NotWorkin__docid__59C55456" FromRole="NotWorking" ToRole="doctor" />
+        </EntityType>
+        <EntityType Name="test">
+          <Key>
+            <PropertyRef Name="tid" />
+          </Key>
+          <Property Name="tid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="docid" Type="Int32" />
+          <Property Name="pid" Type="Int32" />
+          <Property Name="pname" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="test_details" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="testamt" Type="Decimal" Nullable="false" Precision="8" Scale="2" />
+          <Property Name="docname" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="doctor" Relationship="bookingdbModel.FK__test__docid__51300E55" FromRole="test" ToRole="doctor" />
+          <NavigationProperty Name="patientreg" Relationship="bookingdbModel.FK__test__pid__5224328E" FromRole="test" ToRole="patientreg" />
+        </EntityType>
+        <Association Name="FK__NotWorkin__docid__59C55456">
+          <End Type="bookingdbModel.doctor" Role="doctor" Multiplicity="1" />
+          <End Type="bookingdbModel.NotWorking" Role="NotWorking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="doctor">
+              <PropertyRef Name="docId" />
+            </Principal>
+            <Dependent Role="NotWorking">
+              <PropertyRef Name="docid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__test__docid__51300E55">
+          <End Type="bookingdbModel.doctor" Role="doctor" Multiplicity="0..1" />
+          <End Type="bookingdbModel.test" Role="test" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="doctor">
+              <PropertyRef Name="docId" />
+            </Principal>
+            <Dependent Role="test">
+              <PropertyRef Name="docid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__test__pid__5224328E">
+          <End Type="bookingdbModel.patientreg" Role="patientreg" Multiplicity="0..1" />
+          <End Type="bookingdbModel.test" Role="test" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="patientreg">
+              <PropertyRef Name="pid" />
+            </Principal>
+            <Dependent Role="test">
+              <PropertyRef Name="pid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="usertab">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="email" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="role" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="pwd" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="bookingdbModelStoreContainer" CdmEntityContainer="bookingdbEntities1">
-          <EntitySetMapping Name="appointments">
-            <EntityTypeMapping TypeName="bookingdbModel.appointment">
-              <MappingFragment StoreEntitySet="appointment">
-                <ScalarProperty Name="apid" ColumnName="apid" />
-                <ScalarProperty Name="drloc" ColumnName="drloc" />
-                <ScalarProperty Name="drcid" ColumnName="drcid" />
-                <ScalarProperty Name="patid" ColumnName="patid" />
-                <ScalarProperty Name="pname" ColumnName="pname" />
-                <ScalarProperty Name="time" ColumnName="time" />
-                <ScalarProperty Name="bookingdate" ColumnName="bookingdate" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="payments">
             <EntityTypeMapping TypeName="bookingdbModel.payment">
               <MappingFragment StoreEntitySet="payments">
@@ -439,16 +562,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="usertabs">
-            <EntityTypeMapping TypeName="bookingdbModel.usertab">
-              <MappingFragment StoreEntitySet="usertab">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="email" ColumnName="email" />
-                <ScalarProperty Name="roll" ColumnName="roll" />
-                <ScalarProperty Name="pwd" ColumnName="pwd" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="doctors">
             <EntityTypeMapping TypeName="bookingdbModel.doctor">
               <MappingFragment StoreEntitySet="doctor">
@@ -460,16 +573,6 @@
                 <ScalarProperty Name="hosploc" ColumnName="hosploc" />
                 <ScalarProperty Name="docname" ColumnName="docname" />
                 <ScalarProperty Name="docId" ColumnName="docId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="tests">
-            <EntityTypeMapping TypeName="bookingdbModel.test">
-              <MappingFragment StoreEntitySet="test">
-                <ScalarProperty Name="docname" ColumnName="docname" />
-                <ScalarProperty Name="testamt" ColumnName="testamt" />
-                <ScalarProperty Name="pname" ColumnName="pname" />
-                <ScalarProperty Name="tid" ColumnName="tid" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -494,6 +597,56 @@
                 <ScalarProperty Name="address" ColumnName="address" />
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="pid" ColumnName="pid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="appointments">
+            <EntityTypeMapping TypeName="bookingdbModel.appointment">
+              <MappingFragment StoreEntitySet="appointment">
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="feepaid" ColumnName="feepaid" />
+                <ScalarProperty Name="consulted" ColumnName="consulted" />
+                <ScalarProperty Name="cancelled" ColumnName="cancelled" />
+                <ScalarProperty Name="ailments" ColumnName="ailments" />
+                <ScalarProperty Name="bookingdate" ColumnName="bookingdate" />
+                <ScalarProperty Name="time" ColumnName="time" />
+                <ScalarProperty Name="pname" ColumnName="pname" />
+                <ScalarProperty Name="patid" ColumnName="patid" />
+                <ScalarProperty Name="drcid" ColumnName="drcid" />
+                <ScalarProperty Name="drloc" ColumnName="drloc" />
+                <ScalarProperty Name="apid" ColumnName="apid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NotWorkings">
+            <EntityTypeMapping TypeName="bookingdbModel.NotWorking">
+              <MappingFragment StoreEntitySet="NotWorking">
+                <ScalarProperty Name="onDate" ColumnName="onDate" />
+                <ScalarProperty Name="docid" ColumnName="docid" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tests">
+            <EntityTypeMapping TypeName="bookingdbModel.test">
+              <MappingFragment StoreEntitySet="test">
+                <ScalarProperty Name="docname" ColumnName="docname" />
+                <ScalarProperty Name="testamt" ColumnName="testamt" />
+                <ScalarProperty Name="test_details" ColumnName="test_details" />
+                <ScalarProperty Name="pname" ColumnName="pname" />
+                <ScalarProperty Name="pid" ColumnName="pid" />
+                <ScalarProperty Name="docid" ColumnName="docid" />
+                <ScalarProperty Name="tid" ColumnName="tid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="usertabs">
+            <EntityTypeMapping TypeName="bookingdbModel.usertab">
+              <MappingFragment StoreEntitySet="usertab">
+                <ScalarProperty Name="pwd" ColumnName="pwd" />
+                <ScalarProperty Name="role" ColumnName="role" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

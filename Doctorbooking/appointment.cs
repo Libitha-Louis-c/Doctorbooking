@@ -21,6 +21,11 @@ namespace Doctorbooking
         public string pname { get; set; }
         public string time { get; set; }
         public System.DateTime bookingdate { get; set; }
+        public string ailments { get; set; }
+        public Nullable<bool> cancelled { get; set; }
+        public Nullable<bool> consulted { get; set; }
+        public Nullable<decimal> feepaid { get; set; }
+        public Nullable<System.DateTime> date { get; set; }
     
         public virtual doctor doctor { get; set; }
         public virtual patientreg patientreg { get; set; }

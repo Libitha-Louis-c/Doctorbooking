@@ -101,6 +101,7 @@
     <Content Include="default.aspx" />
     <Content Include="drdiagno.aspx" />
     <Content Include="drlogin.aspx" />
+    <Content Include="drprofile.aspx" />
     <Content Include="drreg.aspx" />
     <Content Include="drviewbook.aspx" />
     <Content Include="images\Drimage\1.png" />
@@ -199,6 +200,13 @@
     <Compile Include="drlogin.aspx.designer.cs">
       <DependentUpon>drlogin.aspx</DependentUpon>
     </Compile>
+    <Compile Include="drprofile.aspx.cs">
+      <DependentUpon>drprofile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="drprofile.aspx.designer.cs">
+      <DependentUpon>drprofile.aspx</DependentUpon>
+    </Compile>
     <Compile Include="drreg.aspx.cs">
       <DependentUpon>drreg.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -229,6 +237,9 @@
     </Compile>
     <Compile Include="logout.aspx.designer.cs">
       <DependentUpon>logout.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="NotWorking.cs">
+      <DependentUpon>BookingModel.tt</DependentUpon>
     </Compile>
     <Compile Include="patientdetail.aspx.cs">
       <DependentUpon>patientdetail.aspx</DependentUpon>

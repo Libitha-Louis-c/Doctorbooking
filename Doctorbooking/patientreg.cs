@@ -17,8 +17,9 @@ namespace Doctorbooking
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public patientreg()
         {
-            this.appointments = new HashSet<appointment>();
             this.payments = new HashSet<payment>();
+            this.appointments = new HashSet<appointment>();
+            this.tests = new HashSet<test>();
         }
     
         public int pid { get; set; }
@@ -31,8 +32,10 @@ namespace Doctorbooking
         public string password { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<payment> payments { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<appointment> appointments { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<payment> payments { get; set; }
+        public virtual ICollection<test> tests { get; set; }
     }
 }

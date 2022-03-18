@@ -25,13 +25,14 @@ namespace Doctorbooking
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<appointment> appointments { get; set; }
         public virtual DbSet<payment> payments { get; set; }
         public virtual DbSet<spectab> spectabs { get; set; }
-        public virtual DbSet<usertab> usertabs { get; set; }
         public virtual DbSet<doctor> doctors { get; set; }
-        public virtual DbSet<test> tests { get; set; }
         public virtual DbSet<drspecialisation> drspecialisations { get; set; }
         public virtual DbSet<patientreg> patientregs { get; set; }
+        public virtual DbSet<appointment> appointments { get; set; }
+        public virtual DbSet<NotWorking> NotWorkings { get; set; }
+        public virtual DbSet<test> tests { get; set; }
+        public virtual DbSet<usertab> usertabs { get; set; }
     }
 }

@@ -36,7 +36,7 @@ namespace Doctorbooking
 
         protected void PatientRegButton_Click(object sender, EventArgs e)
         {
-            string result = updateProfile(Convert.ToInt32(hidnid.Value),name.Value,
+            string result = updateProfile(Convert.ToInt32(hidnid.Value), name.Value,
                 phone.Value, Convert.ToInt32(pincode.Value), address.Value, gender.Value);
             if (!string.IsNullOrWhiteSpace(result))
             {

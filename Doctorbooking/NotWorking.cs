@@ -12,17 +12,12 @@ namespace Doctorbooking
     using System;
     using System.Collections.Generic;
     
-    public partial class test
+    public partial class NotWorking
     {
-        public int tid { get; set; }
-        public Nullable<int> docid { get; set; }
-        public Nullable<int> pid { get; set; }
-        public string pname { get; set; }
-        public string test_details { get; set; }
-        public decimal testamt { get; set; }
-        public string docname { get; set; }
+        public int Id { get; set; }
+        public int docid { get; set; }
+        public System.DateTime onDate { get; set; }
     
         public virtual doctor doctor { get; set; }
-        public virtual patientreg patientreg { get; set; }
     }
 }

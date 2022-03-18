@@ -16,7 +16,7 @@ namespace Doctorbooking
     {
         public int Id { get; set; }
         public string email { get; set; }
-        public string roll { get; set; }
+        public string role { get; set; }
         public string pwd { get; set; }
     }
 }
