@@ -18,6 +18,7 @@ namespace Doctorbooking
             {
                 Response.Write("Requires patient login");
                 Server.Transfer("login.aspx");
+                //Response.End();
                 return;
             }
             else
@@ -46,6 +47,7 @@ namespace Doctorbooking
             }
             else
             {
+                
                 try
                 {
                     //Format Booking Date
@@ -57,6 +59,12 @@ namespace Doctorbooking
                         return;
                     }
                     string dts = dt.ToString("yyyy-MM-dd");
+                    DateTime bdt = Convert.ToDateTime(dts);
+                    if (bdt.ToString("ddd").ToLower() == "sun")
+                    {
+                        ShowMsg("Sorry, Holiday (Sunday) Booking not permitted ..!");
+                        return;
+                    }
                     //Verify Doctor Info
                     int did = Convert.ToInt32(hidndr.Value);
                     doctor d = db.doctors.Find(did);
@@ -69,7 +77,7 @@ namespace Doctorbooking
                     p.appointments.Add(new appointment
                     {
                         Date = DateTime.Now,
-                        bookingdate = Convert.ToDateTime(dts),
+                        bookingdate = bdt,
                         time = txttime.Text,
                         drcid = did,
                         pname = txtname.Text,
@@ -82,6 +90,8 @@ namespace Doctorbooking
                         ShowMsg($"Your Booking is received for Dr.{d.docname.ToUpper()}");
                         lblerror.ForeColor = System.Drawing.Color.Green;
                         lblerror.Focus();
+                        string msg = $"dear {p.name},\nThank you for Booking.\n\n Booking for Appointment with Dr:{d.docname }  on {bdt.ToString("dd-MM-yyyy")} at {txttime.Text} received successfully \nThank you\nAdministrator,\nDoctor booking system.";
+                        Mailer.SendMail(p.email, "Booking Confirmation", msg);
                     }
                 }
                 //catch (DbEntityValidationException ex)
