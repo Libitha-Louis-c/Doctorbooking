@@ -122,6 +122,7 @@
     <Content Include="js\scrollspy.min.js" />
     <Content Include="login.aspx" />
     <Content Include="logout.aspx" />
+    <Content Include="mybooking.aspx" />
     <Content Include="patientdetail.aspx" />
     <Content Include="patientreg.aspx" />
     <Content Include="patprofile.aspx" />
@@ -237,6 +238,13 @@
     </Compile>
     <Compile Include="logout.aspx.designer.cs">
       <DependentUpon>logout.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Mailer.cs" />
+    <Compile Include="mybooking.aspx.cs">
+      <DependentUpon>mybooking.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="mybooking.aspx.designer.cs">
+      <DependentUpon>mybooking.aspx</DependentUpon>
     </Compile>
     <Compile Include="NotWorking.cs">
       <DependentUpon>BookingModel.tt</DependentUpon>
